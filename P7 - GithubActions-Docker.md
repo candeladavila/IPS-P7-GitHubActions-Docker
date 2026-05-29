@@ -238,3 +238,24 @@ git push
 ```
 Para comprobar que todo ha ido bien vamos al repositorio > Actions y comprobamos que el workflow ha pasado (circulo en verde)
 
+## Para comprobar que se actualizado Kubernetes
+```bash 
+kubectl get pods
+kubectl get deployments
+kubectl rollout status deployment/hospital-app
+```
+Para ver que imagen estamos usando: 
+```bash
+kubectl describe deployment hospital-app
+```
+Buscamos en image: algo parecido a
+```bash 
+TU_USUARIO_DOCKER/practica7-hospital:HASH_DEL_COMMIT
+```
+
+## Validar el despligue automático con un cambio
+Modificar cualquier archivo del proyecto, hacer un commit y un push. 
+Cuando haya terminado el workflow probar: 
+```bash
+curl http://localhost:30080/version
+```

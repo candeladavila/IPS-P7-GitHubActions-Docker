@@ -236,3 +236,5 @@ git add .
 git commit -m "Add Docker and Kubernetes deployment workflow"
 git push
 ```
+Para comprobar que todo ha ido bien vamos al repositorio > Actions y comprobamos que el workflow ha pasado (circulo en verde)
+

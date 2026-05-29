@@ -1,0 +1,51 @@
+name: Docker Publish and Deploy
+
+on:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build-push-deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Descargar codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Dar permisos a Maven Wrapper
+        run: chmod +x ./mvnw
+
+      - name: Compilar aplicacion
+        run: ./mvnw clean package -DskipTests --no-transfer-progress
+
+      - name: Login en Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Construir imagen Docker
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/practica7-hospital:${{ github.sha }} .
+
+      - name: Etiquetar imagen como latest
+        run: docker tag ${{ secrets.DOCKERHUB_USERNAME }}/practica7-hospital:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/practica7-hospital:latest
+
+      - name: Subir imagen con tag del commit
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/practica7-hospital:${{ github.sha }}
+
+      - name: Subir imagen latest
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/practica7-hospital:latest
+
+      - name: Desplegar en Kubernetes
+        run: |
+          kubectl apply -f k8s/deployment.yml
+          kubectl apply -f k8s/service.yml
+          kubectl set image deployment/hospital-app hospital-app=${{ secrets.DOCKERHUB_USERNAME }}/practica7-hospital:${{ github.sha }}
+          kubectl rollout status deployment/hospital-app

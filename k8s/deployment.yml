@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hospital-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hospital-app
+  template:
+    metadata:
+      labels:
+        app: hospital-app
+    spec:
+      containers:
+        - name: hospital-app
+          image: candeladavila/iips-p7-practica-medicos:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080

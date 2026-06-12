@@ -259,3 +259,15 @@ Cuando haya terminado el workflow probar:
 ```bash
 curl http://localhost:30080/version
 ```
+
+# Importante
+- En la solución de la práctica sobra la última línea de los retries
+- Si se usar vars. lo que sea hay que definirlo en el repo donde se definen los secretos con el mismo nombre y el valor
+  Una alternativa es usar variables de entorno que se definen al principio del código de la forma
+     ```yml
+     env:
+        NOMBRE_VARIABLE: VALOR
+     ```
+  En importante definir la variable REGISTRY para poder subir las imágenes a DockerHub de forma que: 
+  - CLAVE = REGISTRY
+  - VALOR = docker.io
